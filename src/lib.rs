@@ -16,11 +16,20 @@ impl Config {
         }
         let query = args[1].clone();
         let filename = args[2].clone();
-        
-        let case_sensitive = env::var("CASE_SENSITIVE").is_err();
+    
+        let mut case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+
+        if args.len() > 2 {
+            case_sensitive = !case_insensitive_flag_is_set(args);
+        }
 
         Ok(Config { query, filename, case_sensitive })
     }
+}
+
+fn case_insensitive_flag_is_set(args: &[String]) -> bool {
+    let flag_name = String::from("--case-insensitive");
+    args.contains(&flag_name)
 }
 
 pub fn run(config: Config) -> Result<(), Box<Error>> {
